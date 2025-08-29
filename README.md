@@ -119,11 +119,8 @@ Create a `.env` file in the project root with the following variables:
 | `DB_HOST` | Database host | localhost | ❌ (Local) |
 | `DB_PORT` | Database port | 5432 | ❌ (Local) |
 | `REDIS_URL` | Redis connection string | redis://localhost:6379/0 | ✅ |
-| `EMAIL_HOST` | SMTP host | smtp.gmail.com | ❌ |
-| `EMAIL_PORT` | SMTP port | 587 | ❌ |
-| `EMAIL_HOST_USER` | SMTP username | - | ❌ |
-| `EMAIL_HOST_PASSWORD` | SMTP password | - | ❌ |
-| `DEFAULT_FROM_EMAIL` | Default sender email | noreply@billstation.com | ❌ |
+| `MAILGUN_DOMAIN` | domain name for mailgun | - | ❌ |
+| `MAIL_GUN_API_KEY` | api key | - | ❌ |
 
 ### Example Production Environment Variables
 
