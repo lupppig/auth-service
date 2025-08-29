@@ -225,4 +225,4 @@ def logout(request):
 
 @api_view(["GET"])
 def ping(request):
-    return "pong"
+    return Response("pong")
