@@ -221,3 +221,8 @@ def profile(request):
 @api_view(["POST"])
 def logout(request):
     return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def ping(request):
+    return "pong"
