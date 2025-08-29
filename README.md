@@ -103,25 +103,6 @@ user authentication service built with Django, PostgreSQL, Redis, and JWT authen
    - Admin: http://localhost:8000/admin
    - API Docs: http://localhost:8000
 
-## 🔧 Environment Variables
-
-Create a `.env` file in the project root with the following variables:
-
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| `SECRET_KEY` | Django secret key | - | ✅ |
-| `DEBUG` | Debug mode | False | ❌ |
-| `ALLOWED_HOSTS` | Allowed hosts (comma-separated) | * | ❌ |
-| `DATABASE_URL` | PostgreSQL connection string | - | ✅ (Production) |
-| `DB_NAME` | Database name | auth_service | ❌ (Local) |
-| `DB_USER` | Database user | postgres | ❌ (Local) |
-| `DB_PASSWORD` | Database password | password | ❌ (Local) |
-| `DB_HOST` | Database host | localhost | ❌ (Local) |
-| `DB_PORT` | Database port | 5432 | ❌ (Local) |
-| `REDIS_URL` | Redis connection string | redis://localhost:6379/0 | ✅ |
-| `MAILGUN_DOMAIN` | domain name for mailgun | - | ❌ |
-| `MAIL_GUN_API_KEY` | api key | - | ❌ |
-
 ### Example Production Environment Variables
 
 ```env
