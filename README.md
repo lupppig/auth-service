@@ -94,9 +94,8 @@ user authentication service built with Django, PostgreSQL, Redis, and JWT authen
    ```
 
 2. **Access the application**
-   - API: http://localhost:8000
-   - Admin: http://localhost:8000/admin
-   - API Docs: http://localhost:8000
+   - API: https://auth-service-56m4.onrender.com/api/auth
+   - API Docs: https://auth-service-56m4.onrender.com
 
 ### Example Production Environment Variables
 
@@ -115,7 +114,7 @@ EMAIL_HOST_PASSWORD=your-app-password
 
 ### Base URL
 - **Local:** `http://localhost:8000/api/auth/`
-- **Production:** `https://your-app.railway.app/api/auth/`
+- **Production:** `https://auth-service-56m4.onrender.com/api/auth/`
 
 ### Endpoints
 
