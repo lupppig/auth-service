@@ -58,11 +58,6 @@ user authentication service built with Django, PostgreSQL, Redis, and JWT authen
    pip install -r requirements.txt
    ```
 
-4. **Environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
 
 5. **Database setup**
    ```bash
