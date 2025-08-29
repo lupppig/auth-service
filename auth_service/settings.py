@@ -14,6 +14,8 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from urllib.parse import urlparse
+
 from decouple import config
 from dotenv import load_dotenv
 
@@ -107,7 +109,10 @@ if DATABASE_URL:
 
     DATABASES["default"] = dj_database_url.parse(DATABASE_URL)
 
-REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
+REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/0")
+
+parsed_url = urlparse(REDIS_URL)
+use_ssl = parsed_url.scheme == "rediss"
 
 CACHES = {
     "default": {
@@ -115,9 +120,11 @@ CACHES = {
         "LOCATION": REDIS_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "CONNECTION_POOL_KWARGS": {
-                "ssl_cert_reqs": None,
-            },
+            **(
+                {"CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": None}}
+                if use_ssl
+                else {}
+            ),
         },
     }
 }

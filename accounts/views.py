@@ -212,6 +212,7 @@ def reset_password(request):
 
 @swagger_auto_schema(method="get", responses={200: UserProfileSerializer})
 @api_view(["GET"])
+@permission_classes([])
 def profile(request):
     serializer = UserProfileSerializer(request.user)
     return Response(serializer.data, status=status.HTTP_200_OK)
