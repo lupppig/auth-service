@@ -1,6 +1,5 @@
 # Create your views here.
-from django.contrib.auth import get_user_model
-from django.utils.decorators import method_decorator
+from django.contrib.auth import authenticate, get_user_model
 from django_ratelimit.decorators import ratelimit
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -38,13 +37,21 @@ User = get_user_model()
 @api_view(["POST"])
 @permission_classes([permissions.AllowAny])
 def register(request):
+    email = request.data.get("email")
+
+    if User.objects.filter(email=email).exists():
+        return Response(
+            {"message": "User with this email already exists"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
-
-        # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
         access_token = refresh.access_token
+
+        # send_welcome_email(user.email, user.full_name)
 
         return Response(
             {
@@ -75,34 +82,50 @@ def register(request):
 )
 @api_view(["POST"])
 @permission_classes([permissions.AllowAny])
-@method_decorator(ratelimit(key="ip", rate="5/m", method="POST"), name="post")
+@ratelimit(key="ip", rate="5/m", method="POST", block=True)
 def login(request):
-    # \"\"\"Login user and return JWT tokens\"\"\"
-    serializer = UserLoginSerializer(data=request.data)
-    if serializer.is_valid():
-        user = serializer.validated_data["user"]
+    email = request.data.get("email")
+    password = request.data.get("password")
 
-        # Generate JWT tokens
-        refresh = RefreshToken.for_user(user)
-        access_token = refresh.access_token
-
+    if not email or not password:
         return Response(
-            {
-                "message": "Login successful",
-                "user": {
-                    "id": user.id,
-                    "email": user.email,
-                    "full_name": user.full_name,
-                },
-                "tokens": {
-                    "refresh": str(refresh),
-                    "access": str(access_token),
-                },
-            },
-            status=status.HTTP_200_OK,
+            {"message": "Email and password are required"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response(
+            {"message": "User with this email does not exist"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    user = authenticate(request, email=email, password=password)
+    if user is None:
+        return Response(
+            {"message": "Invalid email or password"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    refresh = RefreshToken.for_user(user)
+    access_token = refresh.access_token
+
+    return Response(
+        {
+            "message": "Login successful",
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "full_name": user.full_name,
+            },
+            "tokens": {
+                "refresh": str(refresh),
+                "access": str(access_token),
+            },
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @swagger_auto_schema(
@@ -115,14 +138,14 @@ def login(request):
 )
 @api_view(["POST"])
 @permission_classes([permissions.AllowAny])
-@method_decorator(ratelimit(key="ip", rate="3/m", method="POST"), name="post")
+@ratelimit(key="ip", rate="5/m", method="POST", block=True)
 def forgot_password(request):
     serializer = PasswordResetRequestSerializer(data=request.data)
     if serializer.is_valid():
         email = serializer.validated_data["email"]
 
         try:
-            user = User.objects.get(email=email)
+            _ = User.objects.get(email=email)
 
             token = generate_reset_token()
             store_reset_token(email, token, expires_in=600)

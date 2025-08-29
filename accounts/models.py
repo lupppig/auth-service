@@ -14,6 +14,5 @@ class User(AbstractUser):
         return self.email
 
     class Meta:
-        db_table = "auth_user"
-        verbose_name = "User"
-        verbose_name_plural = "Users"
+        verbose_name = "user"
+        verbose_name_plural = "users"
